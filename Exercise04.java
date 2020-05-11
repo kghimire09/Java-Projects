@@ -1,0 +1,90 @@
+// Write a program that reads data about the changing popularity of baby names and displays the data about a particular name.
+// Prompt the user for a name and gender.
+// Each line a data file has a name, gender, and number in a comma-separated list.
+// EX. "Jennifer,F,56709"
+// Display a nicely formatted table that shows the changing popularity of the name the user entered over time.
+// Think about what would make a good measure of popularity over time.
+// Your program should start with a welcome message explaining the program and how it measures popularity.
+// Also, display the year(s) with highest and lowest popularity.
+// Do not include the data files in your submission.
+// You may assume that your program will be run inside of a folder with all of the data files.
+// Do not assume what years of data will be given (i.e. I may test on a subset of the data or use my own test files).
+// for popularity take total population and divide by name
+// another method would be to rank the names by number
+
+import java.io.*;
+import java.util.*;
+
+public class Exercise04 {
+    public static void main(String[] args){
+        userPrompt();
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter the desired name: ");
+        String babyName = in.next();
+        System.out.println("Enter the desired gender: ");
+        String gender = in.next();
+        getOutput(babyName, gender);
+    }
+
+    public static void userPrompt() {
+        System.out.println("This program displays the changing popularity of baby names over the years 1880 and 2018.");
+        System.out.println("Popularity is measured by dividing the total sum by the sum of the given name");
+        System.out.println("The years with the highest and lowest popularity is also printed.");
+    }
+
+    public static void getOutput(String babyName, String babySex){
+        final String startOfFileName = "yob";
+        final String extensionOfFileName = ".txt";
+        final int lastYear = 2018;
+        final int firstYear = 1880;
+
+        System.out.println("Year    |   Year Total");
+        System.out.println("-----------------------");
+
+        int maximum = 1;
+        int minimum = 1000000000;
+        int inputNameCount = 1;
+
+        for (int year = firstYear; year <= lastYear; year++) {
+            String fileName = startOfFileName + year + extensionOfFileName;
+            Scanner fileIn = null;
+            try {
+                fileIn = new Scanner(new FileReader(fileName));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            if(fileIn != null)
+            while (fileIn.hasNextLine()) {
+                String line = fileIn.nextLine();
+                Scanner scan = new Scanner(line);
+                while (scan.hasNext()) {
+                    scan.useDelimiter(",");
+
+                    String nameToken = scan.next();
+
+                    String genderToken = scan.next();
+
+                    int nameCount = scan.nextInt();
+
+                    if (nameToken.equalsIgnoreCase(babyName) && genderToken.equalsIgnoreCase(babySex)) {
+                        inputNameCount = nameCount;
+
+                        int minimumCount = inputNameCount;
+                        if (minimumCount < minimum) {
+                            minimum = minimumCount;
+                        }
+
+                        if (inputNameCount > maximum) {
+                            maximum = inputNameCount;
+
+                        }
+                        System.out.println("-----------------------");
+                        System.out.println(year + "    |" + "    "+ inputNameCount+ "     |");
+                    }
+                }
+            }
+        }
+        System.out.println("The highest count for one year was: " + maximum);
+        System.out.println("The lowest count for one year was: " + minimum);
+    }
+}
